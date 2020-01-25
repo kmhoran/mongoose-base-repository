@@ -1,22 +1,28 @@
-import mongoose, { Model, Document } from "mongoose";
+import mongoose, { Schema, Model, Document } from "mongoose";
 import { omit } from "lodash";
 
-interface IRepositorySpecs<TDoc extends Document> {
-  model: Model<TDoc, any>;
+interface IRepositorySpecs {
+  collectionName: string;
   primaryKey: string;
+  schemaOptions: any;
 }
 
-class RepositoryBase<T, TDoc extends Document> {
-  private model: Model<TDoc, any>;
+type TDoc<T> = Document & T;
+
+class RepositoryBase<T> {
+  private model: Model<TDoc<T>, any>;
+  private schemaOptions: any;
   private static readonly mongooseExtras = ["_id", "__v"];
 
   private modelPk: string;
-  constructor(specs: IRepositorySpecs<TDoc>) {
-    this.model = specs.model;
+  constructor(specs: IRepositorySpecs) {
+    this.schemaOptions = specs.schemaOptions;
+    const schema: Schema = new Schema({ ...this.schemaOptions }, {autoIndex: false});
+    this.model = mongoose.model<TDoc<T>>(specs.collectionName, schema);
     this.modelPk = specs.primaryKey;
   }
 
-  private toT(tdoc: TDoc | null): T | null {
+  private toT(tdoc: TDoc<T> | null): T | null {
     if (!tdoc) return null;
     return omit(tdoc.toJSON(), RepositoryBase.mongooseExtras) as T;
   }
@@ -30,7 +36,7 @@ class RepositoryBase<T, TDoc extends Document> {
   }
 
   protected async getMultiple(filters: any): Promise<T[]> {
-    const instances = (await this.model.find(filters)) as TDoc[];
+    const instances = (await this.model.find(filters)) as TDoc<T>[];
     return instances.map(i => this.toT(i) as T);
   }
 
@@ -44,7 +50,7 @@ class RepositoryBase<T, TDoc extends Document> {
     }
   }
 
-  private async createDoc(toSave: TDoc): Promise<T | null> {
+  private async createDoc(toSave: TDoc<T>): Promise<T | null> {
     return new Promise(resolve => {
       toSave
         .save()
@@ -65,7 +71,7 @@ class RepositoryBase<T, TDoc extends Document> {
           handleError("caught error while updating", { id, update })(err);
           resolve(null);
         } else {
-          promise.then((doc: TDoc) => {
+          promise.then((doc: TDoc<T>) => {
             resolve(this.toT(doc));
           });
         }
