@@ -1,6 +1,4 @@
 import dbConnect from "./data/dbConnect";
-import { userTypes } from "./userRepo/userTypes";
-import { departmentTypes } from "./departmentRepo/departmentTypes.d";
 import userRepo from "./userRepo";
 import departmanentRepo from "./departmentRepo";
 import config from "./config";
@@ -11,9 +9,10 @@ async function run() {
   const user: userTypes.IUserCreate = {
     email: "user@e.com",
     firstName: "some",
-    lastName: "user"
+    lastName: "user",
+    birthdayUTC: new Date()
   };
-
+  console.log("% service % => pre-save-user: ", user);
   const saved = await userRepo.save(user);
   console.log("% service % => saved user: ", saved);
 
@@ -23,10 +22,11 @@ async function run() {
 
   const toUpdate = JSON.parse(JSON.stringify(found || {}));
   toUpdate.lastName = "one";
+  toUpdate.birthdayUTC = new Date("1980-09-09T08:00:00Z");
   const updated = await userRepo.save(toUpdate);
   console.log("% service % => updated user: ", updated);
 
-  const dept: departmentTypes.IDepartmentCreate = {
+  const dept:  departmentTypes.IDepartmentCreate = {
     name: "Tech",
     managerId: updated?.userId || "",
     buildingName: "HQ"

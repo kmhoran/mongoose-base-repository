@@ -1,4 +1,4 @@
-export namespace departmentTypes {
+declare module departmentTypes {
   interface IDepartment {
     departmentId: string;
     name: string;

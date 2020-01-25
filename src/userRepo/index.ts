@@ -1,6 +1,5 @@
 import repositoryBase from "../data/repositoryBase";
 import { UserSchema } from "./userSchema";
-import { userTypes } from "./userTypes";
 
 class UserRepo extends repositoryBase<userTypes.IUser> {
   private static exists: boolean = false;

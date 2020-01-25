@@ -1,6 +1,5 @@
 import repositoryBase from "../data/repositoryBase";
 import { DepartmentSchema } from "./departmentSchema";
-import { departmentTypes } from "./departmentTypes";
 
 class DepartmentRepo extends repositoryBase<departmentTypes.IDepartment> {
   private static exists: boolean = false;
