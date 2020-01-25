@@ -12,19 +12,19 @@ async function run() {
     lastName: "user",
     birthdayUTC: new Date()
   };
-  console.log("% service % => pre-save-user: ", user);
+  console.log("\n% service % => pre-save-user: ", user);
   const saved = await userRepo.save(user);
-  console.log("% service % => saved user: ", saved);
+  console.log("\n% service % => saved user: ", saved);
 
   const savedId = saved?.userId;
   const found = await userRepo.getSingle(savedId);
-  console.log("% service % => found user: ", found);
+  console.log("\n% service % => found user: ", found);
 
   const toUpdate = JSON.parse(JSON.stringify(found || {}));
   toUpdate.lastName = "one";
   toUpdate.birthdayUTC = new Date("1980-09-09T08:00:00Z");
   const updated = await userRepo.save(toUpdate);
-  console.log("% service % => updated user: ", updated);
+  console.log("\n% service % => updated user: ", updated);
 
   const dept:  departmentTypes.IDepartmentCreate = {
     name: "Tech",
@@ -32,11 +32,11 @@ async function run() {
     buildingName: "HQ"
   };
   const newDept = await departmanentRepo.save(dept);
-  console.log("% service % => new department:", newDept);
+  console.log("\n% service % => new department:", newDept);
 
   const all = await userRepo.getAll();
   const allDept = await departmanentRepo.getAll();
-  console.log("% service % => all users:", all);
+  console.log("\n% service % => all users:", all);
 
   for (let i = 0; i < all.length; i++) {
     await userRepo.delete(all[i].userId);

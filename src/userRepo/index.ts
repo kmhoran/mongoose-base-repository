@@ -1,15 +1,12 @@
 import repositoryBase from "../data/repositoryBase";
-import { UserSchema } from "./userSchema";
+import config from "./config";
 
 class UserRepo extends repositoryBase<userTypes.IUser> {
   private static exists: boolean = false;
   private static instance: UserRepo;
+
   constructor() {
-    super({
-      collectionName: "User",
-      schemaOptions: UserSchema,
-      primaryKey: "userId"
-    });
+    super(config);
     if (UserRepo.exists) return UserRepo.instance;
     UserRepo.exists = true;
     UserRepo.instance = this;

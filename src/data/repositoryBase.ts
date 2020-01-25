@@ -5,14 +5,16 @@ import { omit } from "lodash";
 
 type TDoc<T> = Document & T;
 
+const mongooseExtras = ["_id", "__v", "id"];
+
 class RepositoryBase<T> {
   private model: Model<TDoc<T>, any>;
   private schemaOptions: any;
   private dateProxies: dataTypes.IDateProxy[];
-  private static readonly mongooseExtras = ["_id", "__v"];
 
   private modelPk: string;
   constructor(specs: dataTypes.IRepositorySpecs) {
+    validateRepositorySpecs(specs);
     const dateCleaningResults = stripDatesFromSchema(specs.schemaOptions);
     this.dateProxies = dateCleaningResults.dateProxies;
     this.schemaOptions = dateCleaningResults.schemaOptions;
@@ -29,7 +31,7 @@ class RepositoryBase<T> {
     if (!tdoc) return null;
     let model = tdoc.toJSON();
     model = applyDatesToAppModel(model, this.dateProxies);
-    return omit(model, RepositoryBase.mongooseExtras) as T;
+    return omit(model, mongooseExtras) as T;
   }
 
   public async getSingle(id: string | null = null): Promise<T | null> {
@@ -96,6 +98,24 @@ class RepositoryBase<T> {
       return;
     }
   }
+}
+
+function validateRepositorySpecs(specs: dataTypes.IRepositorySpecs) {
+  if (!specs) throw "Cannot create collection without specifications";
+  const { primaryKey, collectionName, schemaOptions } = specs;
+  const tagline = `Error while creating ${collectionName} collection:`;
+  if (!primaryKey)
+    throw `${tagline} Cannot create collection without primaryKey`;
+  if (!schemaOptions[primaryKey])
+    throw `${tagline} SchemaOptions do not contain primary key '${primaryKey}'`;
+  if (!schemaOptions[primaryKey].required)
+    throw `${tagline} Primary Key '${primaryKey}' must be required`;
+  const fieldNames = Object.keys(schemaOptions);
+  for (let field of fieldNames)
+    if (mongooseExtras.includes(field))
+      throw `${tagline} Cannot use fieldname '${field}'. Reserved by mongoose.`;
+
+  return true;
 }
 
 function handleError(errorMessage: string, args: any = {}) {
