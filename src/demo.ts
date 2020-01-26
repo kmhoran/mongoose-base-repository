@@ -3,8 +3,10 @@ import userRepo from "./userRepo";
 import departmanentRepo from "./departmentRepo";
 import config from "./config";
 
+const demoUpdatingUserId = 'root-user'
+
 async function run() {
-  await dbConnect(config.mongo.connectinString, config.mongo.database);
+  await dbConnect(config.mongo.connectionString, config.mongo.database);
 
   const user: userTypes.IUserCreate = {
     email: "user@e.com",
@@ -13,7 +15,7 @@ async function run() {
     birthdayUTC: new Date()
   };
   console.log("\n% service % => pre-save-user: ", user);
-  const saved = await userRepo.save(user);
+  const saved = await userRepo.save(user, demoUpdatingUserId);
   console.log("\n% service % => saved user: ", saved);
 
   const savedId = saved?.userId;
@@ -23,7 +25,7 @@ async function run() {
   const toUpdate = JSON.parse(JSON.stringify(found || {}));
   toUpdate.lastName = "one";
   toUpdate.birthdayUTC = new Date("1980-09-09T08:00:00Z");
-  const updated = await userRepo.save(toUpdate);
+  const updated = await userRepo.save(toUpdate, demoUpdatingUserId);
   console.log("\n% service % => updated user: ", updated);
 
   const dept:  departmentTypes.IDepartmentCreate = {

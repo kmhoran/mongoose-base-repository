@@ -19,4 +19,10 @@ declare module dataTypes {
     nameOfTicksField: string;
     nameOfDateField: string;
   }
+
+  export interface IChangeTrackable{
+      dateCreatedUTC?: Date;
+      dateLastModifiedUTC?: Date;
+      lastModifieByUserId?: string;
+  }
 }

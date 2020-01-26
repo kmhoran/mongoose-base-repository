@@ -1,18 +1,16 @@
 declare module userTypes {
-  export interface IUser {
+  export interface IUser extends dataTypes.IChangeTrackable {
     userId: string;
     email: string;
     firstName: string;
     lastName: string;
     birthdayUTC?: Date;
-    dateCreatedUTC?: Date;
   }
 
-  export interface IUserCreate {
+  export interface IUserCreate extends dataTypes.IChangeTrackable {
     email: string;
     firstName: string;
     lastName: string;
     birthdayUTC?: Date;
-    dateCreatedUTC?: Date;
   }
 }

@@ -1,7 +1,7 @@
-import repositoryBase from "../data/repositoryBase";
+import ChangeTrackableRepository from "../data/changeTrackableRepository";
 import config from "./config";
 
-class UserRepo extends repositoryBase<userTypes.IUser> {
+class UserRepo extends ChangeTrackableRepository<userTypes.IUser> {
   private static exists: boolean = false;
   private static instance: UserRepo;
 
@@ -16,8 +16,8 @@ class UserRepo extends repositoryBase<userTypes.IUser> {
     return await this.getMultiple({});
   }
 
-  public save(toSave: userTypes.IUser | userTypes.IUserCreate) {
-    return super.save(toSave);
+  public save(toSave: userTypes.IUser | userTypes.IUserCreate, updatingUser: string) {
+    return super.save(toSave, updatingUser);
   }
 }
 

@@ -6,7 +6,9 @@ const schemaOptions: dataTypes.ISchemaOptions = {
   firstName: { type: type.String, required: true },
   lastName: { type: type.String, required: true },
   birthdayUTC: { type: type.Date, required: false },
-  dateCreatedUTC: { type: type.Date, required: false }
+  dateCreatedUTC: { type: type.Date, required: false },
+  dateLastModifiedUTC: { type: type.Date, required: false },
+  lastModifieByUserId: { type: type.String, required: false }
 };
 
 const config: dataTypes.IRepositorySpecs = {

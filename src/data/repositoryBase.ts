@@ -5,6 +5,7 @@ import { omit } from "lodash";
 
 type TDoc<T> = Document & T;
 
+// extra properties mongoose tacks onto saved objects
 const mongooseExtras = ["_id", "__v", "id"];
 
 class RepositoryBase<T> {
@@ -12,12 +13,12 @@ class RepositoryBase<T> {
   private schemaOptions: any;
   private dateProxies: dataTypes.IDateProxy[];
 
-  private modelPk: string;
+  protected modelPk: string;
   constructor(specs: dataTypes.IRepositorySpecs) {
     validateRepositorySpecs(specs);
-    const dateCleaningResults = stripDatesFromSchema(specs.schemaOptions);
-    this.dateProxies = dateCleaningResults.dateProxies;
-    this.schemaOptions = dateCleaningResults.schemaOptions;
+    const {schemaOptions, dateProxies} = stripDatesFromSchema(specs.schemaOptions);
+    this.dateProxies = dateProxies;
+    this.schemaOptions = schemaOptions;
 
     const schema: Schema = new Schema(
       { ...this.schemaOptions },
@@ -32,6 +33,10 @@ class RepositoryBase<T> {
     let model = tdoc.toJSON();
     model = applyDatesToAppModel(model, this.dateProxies);
     return omit(model, mongooseExtras) as T;
+  }
+
+  protected checkIsNew(model: any){
+      return !model[this.modelPk]
   }
 
   public async getSingle(id: string | null = null): Promise<T | null> {
