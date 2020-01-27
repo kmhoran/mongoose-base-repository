@@ -1,17 +1,41 @@
 {
   "name": "mongoose-base-repository",
   "version": "1.0.0",
-  "main": "./src/demo.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "author": "kmhoran",
   "license": "MIT",
+  "files": [
+    "dist/**/*"
+  ],
   "scripts": {
     "start:dev": "yarn run build:dev",
-    "build:dev": "nodemon 'src/demo.ts' --exec 'ts-node' src/demo.ts -e ts"
+    "build:dev": "nodemon 'src/demo/index.ts' --exec 'ts-node' src/demo/index.ts -e ts",
+    "build": "tsc",
+    "test": "jest --config jestconfig.json",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "lint": "tslint -p tsconfig.json",
+    "prepare": "yarn run build",
+    "prepublishOnly": "yarn test && yearn run lint",
+    "preversion": "yarn run lint",
+    "version": "yarn run format && git add -A src",
+    "postversion": "git push && git push --tags"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kmhoran/mongoose-base-repository.git"
   },
   "devDependencies": {
+    "@types/jest": "^24.9.1",
     "@types/lodash": "^4.14.149",
     "@types/mongoose": "^5.5.41",
+    "jest": "^25.1.0",
     "nodemon": "^2.0.2",
+    "prettier": "^1.19.1",
+    "ts-jest": "^25.0.0",
     "ts-node": "^8.6.2",
+    "tslint": "^6.0.0",
+    "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.7.5"
   },
   "dependencies": {
