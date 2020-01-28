@@ -1,5 +1,5 @@
 {
-  "name": "mongoose-base-repository",
+  "name": "mongoose-base-repo",
   "version": "1.0.0",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
